@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itcast.dao.OrderSettingDao">
+    <select id="findCountByDate" parameterType="date" resultType="long">
+        select count(*) from t_ordersetting where orderDate = #{orderDate}
+    </select>
+    <update id="updateByDate" parameterType="orderSetting">
+        update t_ordersetting
+        <set>
+
+            <if test="number!=null and number !=0">
+                number = #{number},
+            </if>
+            <if test="reservations!=null and reservations!=0">
+                reservations = #{reservations}
+            </if>
+        </set>
+        where orderDate = #{orderDate}
+    </update>
+    <insert id="add" parameterType="orderSetting">
+        insert into t_ordersetting (orderDate,number) values (#{orderDate},#{number})
+    </insert>
+
+    <select id="findOrder" parameterType="map" resultType="ordersetting">
+        select * from t_ordersetting where orderDate between #{firstDay} and #{lastDay}
+    </select>
+</mapper>

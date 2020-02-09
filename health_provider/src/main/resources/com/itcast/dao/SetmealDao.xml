@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itcast.dao.SetmealDao">
+    <insert id="add" parameterType="setmeal">
+    <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="int">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+        insert into t_setmeal (name,code,helpCode,sex,age,price,remark,attention,img)
+        values (#{name},#{code},#{helpCode},#{sex},#{age},#{price},#{remark},#{attention},#{img})
+    </insert>
+
+    <insert id="addSmIdAndCgId" parameterType="map">
+        insert into t_setmeal_checkgroup values (#{setmealId},#{checkGroupId})
+    </insert>
+    <select id="findPage" parameterType="String" resultType="setmeal">
+        select * from t_setmeal
+        <where>
+            <if test="value!=null and value.length>0 and value != ''">
+                name=#{value} or code = #{value}
+            </if>
+        </where>
+    </select>
+    <select id="findAll" resultType="setmeal">
+        select * from t_setmeal
+    </select>
+
+    <resultMap id="setmealMap" type="setmeal">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+        <result column="sex" property="sex"/>
+        <result column="age" property="age"/>
+        <result column="img" property="img"/>
+        <collection property="checkGroups" ofType="checkGroup" column="id" select="com.itcast.dao.CheckGroupDao.findCheckGroupsByCid"/>
+    </resultMap>
+
+    <select id="findSetmealById" parameterType="int" resultMap="setmealMap" >
+        select * from t_setmeal where id = #{setmealId}
+    </select>
+
+    <select id="findcheckGroupsBySid" parameterType="int" resultType="int">
+        select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{setmealId}
+    </select>
+<!--防止输入为空,可在前端加上校验,不允许为空-->
+    <update id="editSetMEAL" parameterType="setmeal">
+        update t_setmeal set name=#{name},code=#{code},helpCode=#{helpCode},sex=#{sex},
+        age=#{age},price=#{price},remark=#{remark},attention=#{attention},img=#{img}
+        where id=#{id}
+    </update>
+
+</mapper>
