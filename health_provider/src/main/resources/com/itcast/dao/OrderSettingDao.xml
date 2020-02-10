@@ -25,4 +25,12 @@
     <select id="findOrder" parameterType="map" resultType="ordersetting">
         select * from t_ordersetting where orderDate between #{firstDay} and #{lastDay}
     </select>
+
+    <select id="findOrderSetting" parameterType="date" resultType="orderSetting">
+        select * from t_ordersetting where orderDate=#{orderDate}
+    </select>
+
+    <update id="updateReservationsByOrderDate" parameterType="ordersetting">
+        update t_ordersetting set reservations = #{reservations} where orderDate = #{orderDate}
+    </update>
 </mapper>

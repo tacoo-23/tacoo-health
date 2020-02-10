@@ -155,7 +155,7 @@
                             type: 'success',
                             message: '可预约的数量: ' + value
                         });
-                        var date=this.formatDate(day.getFullYear(),day.getMonth()+1,day.getDate());
+                        // var date=this.formatDate(day.getFullYear(),day.getMonth()+1,day.getDate());
                         axios.get("../ordersetting/order.do?",{
                             orderDate:this.formatDate(day.getFullYear(),day.getMonth()+1,day.getDate()),
                             number:value

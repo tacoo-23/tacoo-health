@@ -66,9 +66,14 @@
                 orderInfo:{}
             },
             mounted(){
-                axios.post("/order/findById.do?id=" + id).then((response) => {
-                    this.orderInfo = response.data.data;
-                });
+                axios.get("/order/findOrderInfoMessageById.do?orderId="+id)
+                    .then(res=>{
+                        if(res.data.flag){
+                            this.orderInfo=res.data.data;
+                        }else {
+                            this.$message.error(res.data.message);
+                        }
+                    })
             }
         });
     </script>

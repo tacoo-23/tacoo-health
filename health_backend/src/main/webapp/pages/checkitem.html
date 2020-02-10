@@ -371,6 +371,37 @@ dialogFormVisible属性:值为true时,该弹窗会弹出,                  -->
                 deepClone(obj) {
                     var target = {};
                     for (var key in obj) {
+                        /*
+                        hasOwnProperty：是用来判断一个对象是否有你给出名称的属性或对象,此方法无法检查该对象的原型链中是否具有该属性，该属性必须是对象本身的一个成员。 
+                        isPrototypeOf是用来判断要检查其原型链的对象是否存在于指定对象实例中，是则返回true，否则返回false。 
+                        instanceof  操作检查对象中是否有名为 property 的属性。也可以检查对象的原型，判断该属性是否为原型链的一部分.
+
+                        JavaScript不保护属性名称hasOwnProperty
+
+                    如果存在对象可能具有使用该名称的属性的可能性，则必须使用外部hasOwnProperty以获得正确的结果：
+                    您可以将以下代码段粘贴粘贴到浏览器控制台，以更好地理解
+
+                    var foo = {
+
+                        hasOwnProperty: function() {
+                        return false;
+                        },
+                        bar: 'I belong to foo'
+                    };
+
+                    总是返回假
+
+
+                    foo.hasOwnProperty('bar'); // false
+
+                    使用另一个对象的hasOwnProperty，并调用它这个集为foo
+
+                    ({}).hasOwnProperty.call(foo, 'bar'); // true
+
+                    为此，也可以使用对象原型中的hasOwnProperty属性
+                    Object.prototype.hasOwnProperty.call(foo, 'bar'); // true
+
+                         */
                         if (Object.prototype.hasOwnProperty.call(obj, key)) {
                             if (typeof obj[key] === 'object') {
                                 target[key] = this.deepClone(obj[key]);
@@ -417,7 +448,7 @@ dialogFormVisible属性:值为true时,该弹窗会弹出,                  -->
             watch:{
                 //当formDataContain中的数据发生改变时,便会走handler函数,
                 formDataContain:{
-                    deep:true,//深监听,true可以监听到formDataContain中的数据
+                    deep:true,//深监听,true可以监听到formDataContain中的数据,否则只可监听到data中的数据
                     //newVal是改变后的值,由系统自己封装,但是不代表newVal一定是和oldVal值不同
                     //有可能改了一下又改回来了
                     handler:function (newVal, oldVar) {

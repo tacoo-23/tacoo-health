@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itcast.dao.OrderDao">
+    <select id="findByCondition" parameterType="order" resultType="long">
+      select count(*) from t_order
+      <where>
+          <if test="setmealId!=null">
+              and setmeal_id=#{setmealId}
+          </if>
+          <if test="orderDate!=null">
+              and orderDate=#{orderDate}
+          </if>
+          <if test="memberId!=null">
+              and member_id=#{memberId}
+          </if>
+      </where>
+    </select>
+    <insert id="addOrder" parameterType="order">
+    <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="int">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+        insert into t_order (member_id,orderDate,orderType,orderStatus,setmeal_id)
+        values (#{memberId},#{orderDate},#{orderType},#{orderStatus},#{setmealId})
+    </insert>
+<!-- 返回类型是map,mybatis会根据查询结果的列名作为Map的key,值为value进行封装-->
+    <select id="findOrderInfoMessageById" parameterType="int" resultType="map">
+        select o.orderType,o.orderDate,s.name setmeal,m.name member
+        from t_order o,t_setmeal s,t_member m
+        where o.id = #{id} and s.id = o.setmeal_id and m.id = o.member_id
+    </select>
+</mapper>
