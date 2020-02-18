@@ -28,6 +28,7 @@
                    <version>2.2</version>
                    <configuration>
                    <port>85</port>
+                       <path>/</path>
                    </configuration>
              </plugin>
             <plugin>

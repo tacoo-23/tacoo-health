@@ -283,7 +283,7 @@
             methods: {
                 //编辑
                 handleEdit() {
-                    axios.post('../checkGroup/edit.do?checkitemIds='+this.checkitemIds,this.formData)
+                    axios.post('/checkGroup/edit.do?checkitemIds='+this.checkitemIds,this.formData)
                         .then(res=>{
                             this.dialogFormVisible4Edit=false;
                             if (res.data.flag){
@@ -291,13 +291,16 @@
                             } else{
                                 this.$message.error(res.data.message)
                             }
-                        }).finally(()=>{
+                        }).catch(res=>{
+                        //若没权限则会走catch,不走then
+                        this.showMessage(res)
+                    }).finally(()=>{
                         this.findPage()
                     })
                 },
                 //添加
                 handleAdd () {
-                    axios.post('../checkGroup/add.do?checkitemIds='+this.checkitemIds,this.formData)
+                    axios.post('/checkGroup/add.do?checkitemIds='+this.checkitemIds,this.formData)
                         .then(res=>{
                             //关闭添加窗口
                             this.dialogFormVisible=false;
@@ -310,7 +313,10 @@
                                 this.$message.error(res.data.message)
                             }
 
-                        }).finally(()=>{
+                        }).catch(res=>{
+                        //若没权限则会走catch,不走then
+                        this.showMessage(res)
+                    }).finally(()=>{
                             alert();
 
                             this.findPage();
@@ -324,7 +330,7 @@
                         pageSize:this.pagination.pageSize,
                         queryString:this.pagination.queryString
                     };
-                    axios.post('../checkGroup/findByPage.do',params)
+                    axios.post('/checkGroup/findByPage.do',params)
                         .then(res=>{
                             this.dataList=res.data.rows;
                             this.pagination.total=res.data.total;
@@ -342,7 +348,7 @@
                     //弹出添加窗口
                     this.dialogFormVisible=true;
 
-                    axios.get('../checkitem/findAll.do').then(res=>{
+                    axios.get('/checkitem/findAll.do').then(res=>{
                         if (res.data.flag){
                             this.tableData=res.data.data;
                         } else{
@@ -358,10 +364,10 @@
                     this.activeName='first';
                     this.dialogFormVisible4Edit=true;
                     this.formData=row;
-                    axios.get('../checkitem/findAll.do').then(res=>{
+                    axios.get('/checkitem/findAll.do').then(res=>{
                         if (res.data.flag){
                             this.tableData=res.data.data;
-                            axios.get('../checkGroup/findCheckItemIds.do?id='+row.id)
+                            axios.get('/checkGroup/findCheckItemIds.do?id='+row.id)
                                 .then(res=>{
                                     if (res.data.flag){
                                         this.checkitemIds=res.data.data;
@@ -393,14 +399,17 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        axios.get('../checkGroup/deleteGroupById.do?id='+row.id)
+                        axios.get('/checkGroup/deleteGroupById.do?id='+row.id)
                             .then(res=>{
                                 if(res.data.flag){
                                     this.$message.success(res.data.message)
                                 }else{
                                     this.$message.error(res.data.message)
                                 }
-                            }).finally(()=>{
+                            }).catch(res=>{
+                            //若没权限则会走catch,不走then
+                            this.showMessage(res)
+                        }).finally(()=>{
                             this.findPage();
                         })
                     }).catch(() => {
@@ -409,9 +418,17 @@
                             message: '已取消删除'
                         });
                     });
-
-
-                }
+                },
+                showMessage(r){
+                    if(r == 'Error: Request failed with status code 403'){
+                        //权限不足
+                        this.$message.error('无访问权限');
+                        return;
+                    }else{
+                        this.$message.error('未知错误');
+                        return;
+                    }
+                },
             }
         })
     </script>

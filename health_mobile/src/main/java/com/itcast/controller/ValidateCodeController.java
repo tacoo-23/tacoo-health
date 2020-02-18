@@ -13,7 +13,7 @@ import redis.clients.jedis.JedisPool;
 
 @RestController
 @RequestMapping("/validateCode")
-public class validateCodeController {
+public class ValidateCodeController {
     @Autowired
     private JedisPool jedisPool;
 
@@ -27,11 +27,26 @@ public class validateCodeController {
             SMSUtils.sendShortMessage("SMS_183245652",telephone,validateCode.toString());
             //将验证码存入redis,并五分钟自动删除,因为五分钟自动删除,时效短,放入redis更好
             //key的名称用手机号+用途代号来做,因为登录注册预约都会用到验证码
-            jedisPool.getResource().setex(telephone+ RedisMessageConstant.SENDTYPE_ORDER,300,validateCode.toString());
+            jedisPool.getResource().setex(telephone+ RedisMessageConstant.SENDTYPE_ORDER,3000,validateCode.toString());
 
         } catch (ClientException e) {
             e.printStackTrace();
             return new Result(false, MessageConstant.SEND_VALIDATECODE_FAIL);
+        }
+        return new Result(true,MessageConstant.SEND_VALIDATECODE_SUCCESS);
+    }
+    @RequestMapping("/sendLoginValidateCode")
+    public Result sendLoginValidateCode(String telephone){
+        //获取一个随机的验证码
+        Integer validateCode = ValidateCodeUtils.generateValidateCode(6);
+        try {
+            //发送验证码
+            SMSUtils.sendShortMessage(SMSUtils.VALIDATE_CODE,telephone,validateCode.toString());
+            //验证码存入redis,五分钟自动销毁
+            jedisPool.getResource().setex(telephone+RedisMessageConstant.SENDTYPE_LOGIN,3000,validateCode.toString());
+        } catch (ClientException e) {
+            e.printStackTrace();
+            return new Result(false,MessageConstant.SEND_VALIDATECODE_FAIL);
         }
         return new Result(true,MessageConstant.SEND_VALIDATECODE_SUCCESS);
     }

@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.itcast.dao.MemberDao">
-    <select id="findMemberByIdCard" parameterType="string" resultType="member">
-        select * from t_member where idCard = #{value}
+    <select id="findMemberBytelephone" parameterType="string" resultType="member">
+        select * from t_member where phoneNumber = #{value}
     </select>
     <insert id="add" parameterType="member">
     <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="int">
@@ -12,4 +12,40 @@
         insert into t_member(fileNumber,name,sex,idCard,phoneNumber,regTime,password,email,birthday,remark)
         values (#{fileNumber},#{name},#{sex},#{idCard},#{phoneNumber},#{regTime},#{password},#{email},#{birthday},#{remark})
     </insert>
+
+    <select id="findMemberCountByMonth" parameterType="string" resultType="int">
+        select count(*) from t_member where regTime &lt;= #{time}
+    </select>
+
+    <select id="findTodayNewMember" parameterType="string" resultType="int">
+        select count(id) from t_member where regTime = #{date}
+    </select>
+
+    <select id="findTotalMember" resultType="int">
+        select count(*) from t_member
+    </select>
+
+    <select id="findNewMember" parameterType="string" resultType="int">
+        select count(id) from t_member where regTime &gt;= #{date}
+    </select>
+    <!--<select id="findThisMonthNewMember" parameterType="string" resultType="int">
+        select count(id) form t_member where regTime &gt;= #{date}
+    </select>-->
+    <resultMap id="memberMap" type="member">
+        <id column="id" property="id"/>
+        <result column="fileNumber" property="fileNumber"/>
+        <result column="name" property="name"/>
+        <result column="sex" property="sex"/>
+        <result column="phoneNumber" property="phoneNumber"/>
+        <result column="regTime" property="regTime"/>
+        <association property="user" javaType="user" column="user_id" select="com.itcast.dao.UserDao.findUserByUid"/>
+    </resultMap>
+    <select id="findPage" parameterType="string" resultMap="memberMap">
+        select * from t_member
+        <where>
+            <if test="value!=null and value.length>0 and value!=''">
+                fileNumber = #{value} or name = #{value} or phoneNumber = #{value}
+            </if>
+        </where>
+    </select>
 </mapper>

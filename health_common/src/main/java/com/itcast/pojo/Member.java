@@ -1,7 +1,11 @@
 package com.itcast.pojo;
 
+import com.itcast.utils.DateUtils;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 会员
@@ -14,11 +18,30 @@ public class Member implements Serializable{
     private String idCard;//身份证号
     private String phoneNumber;//手机号
     private Date regTime;//注册时间
+    private String regTimeStr;//注册时间
     private String password;//登录密码
     private String email;//邮箱
     private Date birthday;//出生日期
     private String remark;//备注
+    private User user;
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    //    private Map<String,String> map;
+
+   /* public Map<String, String> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, String> map) {
+        this.map = map;
+    }
+*/
     public Integer getId() {
         return id;
     }
@@ -73,6 +96,7 @@ public class Member implements Serializable{
 
     public void setRegTime(Date regtime) {
         this.regTime = regtime;
+
     }
 
     public String getPassword() {
@@ -105,5 +129,14 @@ public class Member implements Serializable{
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getRegTimeStr() {
+        regTimeStr=new SimpleDateFormat("yyyy-MM-dd").format(regTime);
+        return regTimeStr;
+    }
+
+    public void setRegTimeStr(String regTimeStr) {
+        this.regTimeStr = regTimeStr;
     }
 }

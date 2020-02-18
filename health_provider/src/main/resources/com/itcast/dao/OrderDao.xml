@@ -29,4 +29,32 @@
         from t_order o,t_setmeal s,t_member m
         where o.id = #{id} and s.id = o.setmeal_id and m.id = o.member_id
     </select>
+
+    <select id="getSetmealData" resultType="setmealData">
+        SELECT s.name,count(o.id) value
+        from t_order o,t_setmeal s
+        where s.id = o.setmeal_id GROUP BY o.setmeal_id
+    </select>
+
+    <select id="findTodayOrderNumber" parameterType="string" resultType="int">
+        select count(id) from t_order where orderDate = #{today}
+    </select>
+
+    <select id="findTodayVisitsNumber" parameterType="string" resultType="int">
+        select count(id) from t_order where orderDate = #{today} and orderStatus='已到诊'
+    </select>
+
+    <select id="findOrderNumberAfterDate" parameterType="string" resultType="int">
+        select count(id) from t_order where orderDate &gt;= #{date}
+    </select>
+
+    <select id="findVisitsNumberAfterDate" parameterType="string" resultType="int">
+        select count(id) from t_order where orderDate &gt;= #{date} and orderStatus='已到诊'
+    </select>
+
+    <select id="findHotSetmeals" resultType="HotSetmeal">
+        SELECT s.name,count(o.id) setmeal_count,count(o.id)/(select count(id) sum from t_order) proportion
+        from t_setmeal s,t_order o
+        where s.id = o.setmeal_id GROUP BY o.setmeal_id order by setmeal_count desc limit 0,4
+    </select>
 </mapper>

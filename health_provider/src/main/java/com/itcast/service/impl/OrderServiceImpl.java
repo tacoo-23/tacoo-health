@@ -14,6 +14,7 @@ import com.itcast.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 @Service(interfaceClass = OrderService.class)
@@ -29,7 +30,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Result submit(Map map) throws Exception {
         //1.检查预约日期是否有设置预约
+
         String orderDateStr = (String) map.get("orderDate");
+
         Date orderDate = DateUtils.parseString2Date(orderDateStr);
         //根据日期查询用户预约日期当天是否有设置预约,不查count是因为后面要用到orderSetting
         OrderSetting orderSetting=orderSettingDao.findOrderSetting(orderDate);
@@ -45,9 +48,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
 
-        String idCard = (String) map.get("idCard");
+        String telephone = (String) map.get("telephone");
         //根据手机号查询会员用户
-        Member member=memberDao.findMemberByIdCard(idCard);
+        Member member=memberDao.findMemberBytelephone(telephone);
         String setmealIdStr = (String) map.get("setmealId");
         //3.检查是否是同一个人同一天重复预约同一个套餐
         if (member!=null){
@@ -66,9 +69,10 @@ public class OrderServiceImpl implements OrderService {
             member = new Member();
             member.setName((String) map.get("name"));
             member.setSex((String) map.get("sex"));
-            member.setIdCard(idCard);
-            member.setPhoneNumber((String) map.get("telephone"));
+            member.setIdCard((String) map.get("idCard"));
+            member.setPhoneNumber(telephone);
             member.setRegTime(new Date());
+            member.setFileNumber(new SimpleDateFormat("yyyyMMdd").format(new Date())+telephone.substring(8));
             memberDao.add(member);
         }
 

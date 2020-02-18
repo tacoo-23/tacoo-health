@@ -79,14 +79,18 @@ public class DateUtils {
         cal.setTime(new Date());
         // 获得当前日期是一个星期的第几天
         int dayWeek = cal.get(Calendar.DAY_OF_WEEK);
-        if (1 == dayWeek) {
+        if (1 == dayWeek) {//星期天
+            //若是星期天,如果是则减一天计算周六的，否则会出问题，计算到下一周去了
+            //因为西方一周开始是星期天,假设今天是星期天,那么按我们的思维,本周还没结束
+            //而在西方是新的一周,那下面cal.setFirstDayOfWeek(Calendar.MONDAY);
+            //这一步按今天是周日来,便把本周日放入下一周来安排,那么本周是一个星期的-1天
             cal.add(Calendar.DAY_OF_MONTH, -1);
         }
         // 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一
         cal.setFirstDayOfWeek(Calendar.MONDAY);
         // 获得当前日期是一个星期的第几天
         int day = cal.get(Calendar.DAY_OF_WEEK);
-        // 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值
+        // 根据日历的规则，给当前日期减去 星期几与一个星期第一天的差值
         cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - day);
         return cal.getTime();
     }

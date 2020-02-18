@@ -21,6 +21,19 @@
         right: 10px;
         padding: 0;
     }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
     </style>
 </head>
 <body class="hold-transition skin-purple sidebar-mini">
@@ -36,21 +49,28 @@
                         <span class="help"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>帮助</span>
                         <el-dropdown class="avatar-container right-menu-item" trigger="click">
                             <div class="avatar-wrapper">
-                                <img src="../img/user2-160x160.jpg" class="user-avatar">
-                                Jay.Liu
+                                <img :src="'http://q50g4hzvk.bkt.clouddn.com/'+userMessage.img" id="userPhoto" class="user-avatar">
+                                {{userMessage.username}}
                             </div>
                             <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item divided>
+                                    <span style="display:block;" @click="editUser">
+                                        <a href="#">账号管理</a></span>
+                                </el-dropdown-item>
                                 <el-dropdown-item divided>
                                     <span style="display:block;">修改密码</span>
                                 </el-dropdown-item>
                                 <el-dropdown-item divided>
-                                        <span style="display:block;">退出</span>
+                                        <span style="display:block;">
+                                            <a href="/logout.do">退出</a>
+                                        </span>
                                     </el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
                 </nav>
             </el-header>
+
             <el-container>
                 <el-aside width="200px">
                     <el-menu>
@@ -68,8 +88,86 @@
                     </el-menu>
                 </el-aside>
                 <el-container>
+
+                    <div class="add-form">
+                        <el-dialog title="用户信息" :visible.sync="dialogFormVisible4Edit">
+                            <template>
+                                <el-tabs type="card">
+
+                                        <el-form label-position="center" label-width="100px" ref="dataEditForm" :model="formUser" :rules="rules">
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="用户名" prop="username">
+                                                        <el-input v-model="formUser.username"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :span="12">
+                                                    <el-form-item label="">
+                                                        <el-input v-model="formUser.id" type="hidden"/>
+                                                    </el-form-item>
+                                                </el-col>
+
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="联系方式">
+                                                        <el-input v-model="formUser.telephone"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="适用性别">
+                                                        <el-select v-model="formUser.gender">
+                                                            <el-option label="男" value="1"></el-option>
+                                                            <el-option label="女" value="2"></el-option>
+                                                        </el-select>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="12">
+                                                    <el-form-item label="生日">
+                                                        <el-date-picker type="date" placeholder="选择日期" v-model="formUser.birthday" style="width: 100%;"></el-date-picker>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row>
+                                                <el-col :span="24">
+                                                    <el-form-item label="修改头像">
+                                                        <!--
+                                                        action:上传路径,点击加号就会访问该路径(因为:auto-upload值为autoUpload表示自动上传
+                                                        imageUrl:引入该路径的图片可以在该页面显示图片完成预览,路径为空,则为false,显示else选项
+                                                        -->
+                                                        <el-upload
+                                                                class="avatar-uploader"
+                                                                action="../setmeal/upload.do"
+                                                                :auto-upload="autoUpload"
+                                                                name="imgFile"
+                                                                :show-file-list="false"
+                                                                :on-success="handleAvatarSuccess"
+                                                                :before-upload="beforeAvatarUpload">
+                                                            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                                        </el-upload>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                        </el-form>
+
+                                </el-tabs>
+                            </template>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
+                                <el-button type="primary" @click="submit()">确定</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+
+
+
 <!--      iframe:可以引用其他的页面资源              -->
-                    <iframe name="right" class="el-main" src="checkitem.html" width="100%" height="580px" frameborder="0"></iframe>
+                    <iframe name="right" id="frame" class="el-main" src="checkitem.html" width="100%" height="580px" frameborder="0"></iframe>
                 </el-container>
             </el-container>
         </el-container>
@@ -79,10 +177,20 @@
 <script src="../js/vue.js"></script>
 <script src="../plugins/elementui/index.js"></script>
 <script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
 <script>
     new Vue({
         el: '#app',
         data:{
+            autoUpload:true,//自动上传
+            userMessage:{},
+            dialogFormVisible4Edit:false,
+            formUser:{},
+            imageUrl:null,
+            oldImg:null,
+            rules: {//校验规则
+                username: [{ required: true, message: '用户名为必填项', trigger: 'blur' }]
+            },
             menuList:[
                 {
                     "path": "1",
@@ -171,14 +279,123 @@
                     "children":[//是否有子菜单，若没有，则为[]
                         {
                             "path": "/5-1",
-                            "title": "工作量统计",
-                            "linkUrl":"all-medical-list.html",
+                            "title": "会员数量统计",
+                            "linkUrl":"report_member.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/5-2",
+                            "title": "套餐预约占比统计",
+                            "linkUrl":"report_setmeal.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/5-3",
+                            "title": "套餐预约占比统计",
+                            "linkUrl":"report_business.html",
                             "children":[]
                         }
                     ]
-                }
+                },
+                {
+                    "path": "6",
+                    "title": "系统设置",
+                    "icon":"fa-users",
+                    "children": [
+                        {
+                            "path": "/6-1",
+                            "title": "菜单管理",
+                            "linkUrl":"menu.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/6-2",
+                            "title": "权限管理",
+                            "linkUrl":"permission.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/6-3",
+                            "title": "角色管理",
+                            "linkUrl":"role.html",
+                            "children":[]
+                        },
+                        {
+                            "path": "/6-4",
+                            "title": "用户管理",
+                            "linkUrl":"user.html",
+                            "children":[]
+                        },
+                    ]
+                },
             ]
-        }
+        },
+        methods:{
+            editUser(){
+                /*let frameElement = $("#frame")[0];
+                frameElement.src="user_message.html";*/
+                this.dialogFormVisible4Edit=true;
+                axios.get("/user/getUserMessage.do")
+                    .then(res=>{
+                        this.formUser=res.data.data;
+                        this.imageUrl="http://q50g4hzvk.bkt.clouddn.com/"+res.data.data.img;
+                    })
+            },
+            submit(){
+                this.$refs['dataEditForm'].validate(valid=>{
+                    if (valid){
+                        this.dialogFormVisible4Edit=false;
+                        axios.post("/user/editUser.do?oldImg="+this.oldImg,this.formUser)
+                            .then(res=>{
+                                if (res.data.flag){
+                                    this.$message.success(res.data.message)
+                                }else{
+                                    this.$message.error(res.data.message)
+                                }
+                            }).finally(()=>{
+                            this.getUserMessage();
+                        })
+                    } else{
+                        this.$message.error("数据校验失败，请检查你的输入信息是否正确！");
+                        return false;
+                    }
+                })
+
+            },
+
+            getUserMessage(){
+                axios.get("/user/getUsername.do")
+                .then(res=>{
+                    if (res.data.flag){
+                        this.userMessage=res.data.data;
+                    }
+                })
+            },
+            //上传图片之前执行
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传套餐图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传套餐图片大小不能超过 2MB!');
+                }
+                this.oldImg=this.formUser.img;
+                return isJPG && isLt2M;
+            },
+            handleAvatarSuccess(response, file) {
+                this.imageUrl="http://q50g4hzvk.bkt.clouddn.com/"+response.data;
+                //将上传成功的文件名赋给formData的img的值,需要将其保存到数据库中作为成功上传的文件
+                this.formUser.img=response.data;
+            },
+
+        },
+
+            created(){
+                this.getUserMessage();
+            }
+
     });
     $(function() {
             var wd = 200;

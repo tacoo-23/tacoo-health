@@ -7,6 +7,7 @@ import com.itcast.entity.QueryPageBean;
 import com.itcast.entity.Result;
 import com.itcast.pojo.CheckItem;
 import com.itcast.service.CheckItemService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ public class CheckItemController {
 
     //添加检查项
     @RequestMapping("/add")
+    @PreAuthorize("hasAuthority('CHECKITEM_ADD')")
     public Result add(@RequestBody CheckItem checkItem) {
         Result result = null;
         try {
@@ -40,6 +42,7 @@ public class CheckItemController {
     }
     //删除检查项
     @RequestMapping("/deleteCheckItemById")
+    @PreAuthorize("hasAuthority('CHECKITEM_DELETE')")
     public Result deleteCheckItemById(Integer id){
         Result result = null;
         try {
@@ -55,6 +58,7 @@ public class CheckItemController {
 
     //编辑检查项
     @RequestMapping("/editOne")
+    @PreAuthorize("hasAuthority('CHECKITEM_EDIT')")
     public Result editOne(@RequestBody CheckItem checkItem){
         try {
             checkItemService.editOne(checkItem);

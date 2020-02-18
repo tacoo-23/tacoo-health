@@ -403,7 +403,7 @@
                 handleAdd () {
                     //发送ajax请求，将表单数据（套餐基本信息、检查组ID）提交到后台进行处理
                     this.dialogFormVisible=false;
-                    axios.post('../setmeal/add.do?checkGroupIds='+this.checkgroupIds,this.formData)
+                    axios.post('/setmeal/add.do?checkGroupIds='+this.checkgroupIds,this.formData)
                         .then(res=>{
                             if (res.data.flag){
                                 this.$message({
@@ -426,7 +426,7 @@
                         currentPage:this.pagination.currentPage,
                         pageSize: this.pagination.pageSize,
                         queryString: this.pagination.queryString}
-                        axios.post("../setmeal/findPage.do",params)
+                        axios.post("/setmeal/findPage.do",params)
                             .then(res=>{
                                 this.pagination.total=res.data.total;
                                 this.dataList=res.data.rows;
@@ -444,7 +444,7 @@
                     this.resetForm();
                     this.dialogFormVisible=true;
                     this.activeName='first';
-                    axios.get("../checkGroup/findAll.do").then(res=>{
+                    axios.get("/checkGroup/findAll.do").then(res=>{
                         if(res.data.flag){
                             this.tableData=res.data.data;
                         }else{
@@ -465,15 +465,15 @@
                     this.formDataContain=this.deepClone(row);
                     this.imageUrl="http://q50g4hzvk.bkt.clouddn.com/"+row.img;
                     this.oldImg=row.img;
-                    // alert(this.oldImg);
+                    alert(this.oldImg);
                     if (row.attention===null){
                         this.formDataContain.attention=null;
                     }
-                    axios.get("../checkGroup/findAll.do")
+                    axios.get("/checkGroup/findAll.do")
                         .then(res=>{
                             if (res.data.flag){
                                 this.tableData=res.data.data;
-                                axios.get("../setmeal/findcheckGroupsBySid.do?setmealId="+row.id)
+                                axios.get("/setmeal/findcheckGroupsBySid.do?setmealId="+row.id)
                                     .then(res=>{
                                         if (res.data.flag){
                                             this.checkgroupIds=res.data.data;
@@ -489,7 +489,7 @@
                 //提交编辑后的数据
                 handleEdit(){
                     this.dialogFormVisible4Edit=false;
-                    axios.post("../setmeal/editSetmeal.do?oldImg="+this.oldImg,this.formDataContain)
+                    axios.post("/setmeal/editSetmeal.do?oldImg="+this.oldImg+"&checkgroupIds="+this.checkgroupIds,this.formDataContain)
                         .then(res=>{
                             if (res.data.flag){
                                 this.$message.success(res.data.message)

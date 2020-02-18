@@ -21,7 +21,13 @@ public class ClearImgJob {
                 jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_RESOURCES,fileName);
             }
         }
-
+        jedisPool.getResource().sdiff(RedisConstant.USER_PIC_RESOURCES,RedisConstant.USER_PIC_DB_RESOURCES);
+        if (set!=null){
+            for (String fileName : set) {
+                QiniuUtils.deleteFileFromQiniu(fileName);
+                jedisPool.getResource().srem(RedisConstant.USER_PIC_RESOURCES,fileName);
+            }
+        }
 
     }
 }

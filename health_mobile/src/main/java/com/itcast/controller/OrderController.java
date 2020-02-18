@@ -1,11 +1,13 @@
 package com.itcast.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.aliyuncs.exceptions.ClientException;
 import com.itcast.constant.MessageConstant;
 import com.itcast.constant.RedisMessageConstant;
 import com.itcast.entity.Result;
 import com.itcast.pojo.Order;
 import com.itcast.service.OrderService;
+import com.itcast.utils.SMSUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +44,13 @@ public class OrderController {
             e.printStackTrace();
             return new Result(false,MessageConstant.ORDER_FAIL);
         }
-
+        if (result.isFlag()){
+            try {
+                SMSUtils.sendShortMessage(SMSUtils.ORDER_NOTICE,telephone, (String) map.get("orderDate"));
+            } catch (ClientException e) {
+                e.printStackTrace();
+            }
+        }
         return result;
     }
     @RequestMapping("/findOrderInfoMessageById")

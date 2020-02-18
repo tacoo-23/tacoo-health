@@ -39,7 +39,6 @@ public class SetmealController {
 //        System.out.println(fileName);
         String uploadFileName = UUID.randomUUID().toString()+fileName;
 
-
         try {
             QiniuUtils.upload2Qiniu(imgFile.getBytes(),uploadFileName);
             //往redis里添加上传图片名称信息
@@ -89,9 +88,9 @@ public class SetmealController {
         }
     }
     @RequestMapping("/editSetmeal")
-    public Result editSetmeal(@RequestBody Setmeal setmeal,String oldImg){
+    public Result editSetmeal(@RequestBody Setmeal setmeal,String oldImg,Integer[] checkgroupIds){
         try {
-            setmealService.editSetmeal(setmeal,oldImg);
+            setmealService.editSetmeal(setmeal,oldImg,checkgroupIds);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(false,MessageConstant.EDIT_SETMEAL_FAIL);

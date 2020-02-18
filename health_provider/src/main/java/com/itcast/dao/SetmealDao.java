@@ -20,4 +20,6 @@ public interface SetmealDao {
     List<Integer> findcheckGroupsBySid(Integer setmealId);
 
     void editSetMEAL(Setmeal setmeal);
+
+    void delCheckGroupIdsBySid(Integer id);
 }

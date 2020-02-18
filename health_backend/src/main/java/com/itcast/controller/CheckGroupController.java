@@ -8,6 +8,7 @@ import com.itcast.entity.Result;
 import com.itcast.pojo.CheckGroup;
 import com.itcast.service.CheckGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ public class CheckGroupController {
     private CheckGroupService checkGroupService;
 
     @RequestMapping("/add")
+    @PreAuthorize("hasAuthority('CHECKGROUP_ADD')")
     public Result add(@RequestBody CheckGroup checkGroup,Integer[] checkitemIds){
         try {
             checkGroupService.add(checkGroup,checkitemIds);
@@ -48,6 +50,7 @@ public class CheckGroupController {
 
     //编辑检查组
     @RequestMapping("/edit")
+    @PreAuthorize("hasAuthority('CHECKGROUP_EDIT')")
     public Result editCheckGroup(@RequestBody CheckGroup checkGroup,Integer[] checkitemIds){
         try {
             checkGroupService.edit(checkGroup,checkitemIds);
@@ -58,6 +61,7 @@ public class CheckGroupController {
         }
     }
     @RequestMapping("/deleteGroupById")
+    @PreAuthorize("hasAuthority('CHECKGROUP_DELETE')")
     public Result deleteGroupById(Integer id){
         try {
             checkGroupService.deleteGroupById(id);

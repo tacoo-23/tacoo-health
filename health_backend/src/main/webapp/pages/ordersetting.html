@@ -129,11 +129,11 @@
         new Vue({
             el: '#app',
             data:{
-                today:new Date(),//当前日期
-                currentDay: 1,
-                currentMonth: 1,
+                today:new Date(),//今天
+                currentDay: 1,//当前页面月份的第一天是周几
+                currentMonth: 1,//当前页面的月份
                 LocalMonth: 1,
-                currentYear: 1970,
+                currentYear: 1970,//当前月面的年份
                 currentWeek: 1,
                 days: [],
                 leftobj: []//用于装载页面显示的月份已经进行预约设置的数据
@@ -156,7 +156,7 @@
                             message: '可预约的数量: ' + value
                         });
                         // var date=this.formatDate(day.getFullYear(),day.getMonth()+1,day.getDate());
-                        axios.get("../ordersetting/order.do?",{
+                        axios.get("/ordersetting/order.do?",{
                             orderDate:this.formatDate(day.getFullYear(),day.getMonth()+1,day.getDate()),
                             number:value
                         })
@@ -196,14 +196,14 @@
                 },
 				//下载模板文件
                 downloadTemplate(){
-                    window.location.href="../template/ordersetting_template.xlsx";
+                    window.location.href="/template/ordersetting_template.xlsx";
                 },
 				//上传成功提示
                 handleSuccess(response, file) {
                     this.$message({
                         message:response.message,
                         type : response.flag ? "success":"error"
-                    })
+                    });
                     this.initData(null)
                 },
                 //初始化当前页要展示的日期
@@ -268,7 +268,7 @@
                     ];*/
 
                     //发送ajax请求，根据当前页面对应的月份查询数据库，封装成相应结果赋值给leftobj模型数据，用于页面展示
-                    axios.get("../ordersetting/findOrderByDate.do?date="+this.currentYear+"-"+this.currentMonth)
+                    axios.get("/ordersetting/findOrderByDate.do?date="+this.currentYear+"-"+this.currentMonth)
                         .then(res=>{
                             if(res.data.flag){
                                 this.leftobj = res.data.data;

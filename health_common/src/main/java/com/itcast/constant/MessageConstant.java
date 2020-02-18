@@ -38,6 +38,7 @@ public class MessageConstant {
     public static final String EDIT_MEMBER_SUCCESS = "编辑会员成功";
     public static final String TELEPHONE_VALIDATECODE_NOTNULL = "手机号和验证码都不能为空";
     public static final String LOGIN_SUCCESS = "登录成功";
+    public static final String LOGIN_FAIL = "登录成功";
     public static final String VALIDATECODE_ERROR = "验证码输入错误";
     public static final String QUERY_ORDER_SUCCESS = "查询预约信息成功";
     public static final String QUERY_ORDER_FAIL = "查询预约信息失败";
@@ -54,6 +55,8 @@ public class MessageConstant {
     public static final String ORDER_FAIL = "预约失败";
     public static final String GET_USERNAME_SUCCESS = "获取当前登录用户名称成功";
     public static final String GET_USERNAME_FAIL = "获取当前登录用户名称失败";
+    public static final String GET_USER_SUCCESS = "获取当前登录用户信息成功";
+    public static final String GET_USER_FAIL = "获取当前登录用户信息失败";
     public static final String GET_MENU_SUCCESS = "获取当前登录用户菜单成功";
     public static final String GET_MENU_FAIL = "获取当前登录用户菜单失败";
     public static final String GET_MEMBER_NUMBER_REPORT_SUCCESS = "获取会员统计数据成功";
@@ -66,4 +69,6 @@ public class MessageConstant {
     public static final String GET_SETMEAL_LIST_FAIL = "查询套餐列表数据失败";
     public static final String EDIT_SETMEAL_FAIL = "编辑套餐失败";
     public static final String EDIT_SETMEAL_SUCCESS = "编辑套餐成功";
+    public static final String EDIT_USER_FAIL = "编辑用户失败";
+    public static final String EDIT_USER_SUCCESS = "编辑用户成功";
 }

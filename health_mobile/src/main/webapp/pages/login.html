@@ -40,11 +40,11 @@
                     <div class="input-row">
                         <label>验证码</label>
                         <div class="loginInput">
-                            <input v-model="loginInfo.validateCode" style="width:80%" id='password' type="password" placeholder="请输入验证码">
+                            <input v-model="loginInfo.validateCode" style="width:80%" id='password' type="text" placeholder="请输入验证码">
                         </div>
                     </div>
                     <div class="input-row" style="font-size: 12px">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" checked id="read">
                         阅读并同意《传智健康用户协议》《传智健康隐私条款》
                     </div>
                     <div class="btn yes-btn"><a @click="login()" href="#">登录</a></div>
@@ -59,40 +59,47 @@
             data:{
                 loginInfo:{}//登录信息
             },
-            methods:{
+            methods: {
                 //发送验证码
-                sendValidateCode(){
-                    var telephone = this.loginInfo.telephone;
-                    if (!checkTelephone(telephone)) {
-                        this.$message.error('请输入正确的手机号');
+                sendValidateCode() {
+                    if (!checkTelephone(this.loginInfo.telephone)) {
+                        this.$message.error("请输入正确的手机号");
                         return false;
                     }
                     validateCodeButton = $("#validateCodeButton")[0];
-                    clock = window.setInterval(doLoop, 1000); //一秒执行一次
-                    axios.post("/validateCode/send4Login.do?telephone=" + telephone).then((response) => {
-                        if(!response.data.flag){
-                            //验证码发送失败
-                            this.$message.error('验证码发送失败，请检查手机号输入是否正确');
-                        }
-                    });
+                    clock = window.setInterval(doLoop, 1000);
+                    axios.get("/validateCode/sendLoginValidateCode.do?telephone=" + this.loginInfo.telephone)
+                        .then(res => {
+                            if (res.data.flag) {
+                                this.$message.success(res.data.message)
+                            } else {
+                                this.$message.error(res.data.message)
+                            }
+                        })
                 },
                 //登录
-                login(){
-                    var telephone = this.loginInfo.telephone;
-                    if (!checkTelephone(telephone)) {
-                        this.$message.error('请输入正确的手机号');
+                login() {
+                        if (!checkValidateCode(this.loginInfo.validateCode)) {
+                            this.$message.error("请检查验证码格式是否正确");
+                            return false;
+                        }
+                    let readElement = $("#read")[0];
+                    if (!readElement.checked) {
+                        this.$message.error("请阅读XXX");
                         return false;
                     }
-                    axios.post("/login/check.do",this.loginInfo).then((response) => {
-                        if(response.data.flag){
-                            //登录成功,跳转到index.html
-                            window.location.href="index.html";
-                        }else{
-                            //失败，提示失败信息
-                            this.$message.error(response.data.message);
-                        }
-                    });
-                }
+                        axios.post("/member/login.do", this.loginInfo)
+                            .then(res => {
+                                if (res.data.flag) {
+                                    this.$message.success(res.data.message);
+
+                                    //跳转路径
+                                    window.location.href = "member.html";
+                                } else {
+                                    this.$message.error(res.data.message)
+                                }
+                            })
+                    }
             }
         });
     </script>

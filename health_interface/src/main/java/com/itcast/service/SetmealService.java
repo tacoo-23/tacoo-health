@@ -17,5 +17,5 @@ public interface SetmealService {
 
     List<Integer> findcheckGroupsBySid(Integer setmealId) throws Exception;
 
-    void editSetmeal(Setmeal setmeal, String oldImg) throws Exception;
+    void editSetmeal(Setmeal setmeal, String oldImg, Integer[] checkgroupIds) throws Exception;
 }

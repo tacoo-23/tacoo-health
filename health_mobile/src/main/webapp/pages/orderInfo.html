@@ -126,7 +126,7 @@
                             //validateCodeButton是js文件中定义的js对象
                             //获得该标签对象设置其不可点击的属性,disable
                             validateCodeButton=$("#validateCodeButton")[0];
-                            clock = window.setInterval(doLoop,3000);
+                            clock = window.setInterval(doLoop,1000);//表示1秒执行一次
                             axios.get("/validateCode/sendOrderValidateCode.do?telephone="+telphone)
                                 .then(res=>{
                                     if (res.data.flag){
@@ -140,7 +140,7 @@
                     //提交预约
                     submitOrder(){
                         if(!checkValidateCode(this.orderInfo.validateCode)){
-                            this.$message.error("请检查验证码是否输入正确")
+                            this.$message.error("请检查验证码是否输入正确");
                             return false;
                         }
                         if(!checkIdCard(this.orderInfo.idCard)){

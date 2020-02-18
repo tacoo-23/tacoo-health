@@ -33,6 +33,9 @@ public class OrderSettingServiceImpl implements OrderSettingService {
 
     @Override
     public List<Map> findOrderByDate(String date) {//yyyy-MM
+        //该方法需要优化一下,直接传date,编写一下sql语句,让mybatis来封装成map,返回回去
+
+
         Map<String,String> map = new HashMap<String, String>();
         map.put("firstDay",date+"-1");
         map.put("lastDay",date+"-31");//一个月最多31天
@@ -59,8 +62,7 @@ public class OrderSettingServiceImpl implements OrderSettingService {
     public void order(OrderSetting orderSetting) throws Exception {
         //在数据库有记录的基础上设置是更改,没有便是添加
 //        String newDate = date.replaceAll("-", "/");
-        //因为数据库的日期格式是按表格中的yyyy/mm/dd格式导入的
-        //按照yyyy-mm-dd格式是无法匹配数据库的日期格式
+
         Long count = orderSettingDao.findCountByDate(orderSetting.getOrderDate());
 //        System.out.println(new Date(newDate)+"  "+num);
         if (count>0){

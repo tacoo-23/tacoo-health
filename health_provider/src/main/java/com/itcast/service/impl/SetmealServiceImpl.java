@@ -74,10 +74,22 @@ public class SetmealServiceImpl implements SetmealService {
     }
 
     @Override
-    public void editSetmeal(Setmeal setmeal, String oldImg) throws Exception {
+    public void editSetmeal(Setmeal setmeal, String oldImg, Integer[] checkgroupIds) throws Exception {
+
+        setmealDao.delCheckGroupIdsBySid(setmeal.getId());
+        if (checkgroupIds!=null){
+            Map<String,Integer> map = new HashMap<String, Integer>();
+            for (Integer checkgroupId : checkgroupIds) {
+                map.put("setmealId",setmeal.getId());
+                map.put("checkGroupId",checkgroupId);
+                setmealDao.addSmIdAndCgId(map);
+            }
+        }
+
         setmealDao.editSetMEAL(setmeal);
-        jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES,setmeal.getImg());
         jedisPool.getResource().srem(RedisConstant.SETMEAL_PIC_DB_RESOURCES,oldImg);
+        jedisPool.getResource().sadd(RedisConstant.SETMEAL_PIC_DB_RESOURCES,setmeal.getImg());
+
         //生成静态页面
         makeMoblieGenerateHtml();
 
