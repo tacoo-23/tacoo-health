@@ -181,6 +181,12 @@
             resetForm() {
                 this.formData={};
             },
+            handleAdd(){
+                axios("/permession/add.do",this.formatDate)
+                    .then(res=>{
+
+                    })
+            }
         },
 
     })
