@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itcast.dao.PermissionDao">
+    <select id="findPermissionByRid" parameterType="int" resultType="permission">
+        select * from t_permission where id in (select permission_id from t_role_permission where role_id=#{id})
+    </select>
+
+    <select id="findPage" parameterType="string" resultType="permission">
+        select * from t_permission
+        <if test="value != null and value.length > 0">
+            where keyword = #{value} or name = #{value}
+        </if>
+    </select>
+</mapper>
